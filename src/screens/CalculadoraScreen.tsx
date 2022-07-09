@@ -1,103 +1,23 @@
-import React, {useRef, useState} from 'react';
+import React from 'react';
 import {Text, View} from 'react-native';
 import ButtonCalc from '../components/ButtonCalc';
 import styles from '../theme/appTheme';
-
-enum Operadores {
-  sumar,
-  restar,
-  multiplicar,
-  dividir,
-}
+import {useCalculator} from '../hooks/useCalculator';
 
 function CalculadoraScreen() {
-  const [lastNumber, setLastNumber] = useState('0');
-  const [number, setNumber] = useState('0');
-
-  const lastOperation = useRef<Operadores>();
-
-  const clear = () => {
-    setNumber('0');
-    setLastNumber('0');
-  };
-
-  const setNumberDisplay = (currentNumber: string) => {
-    if (number.includes('.') && currentNumber === '.') {
-      return;
-    }
-
-    if (number.startsWith('0') || number.startsWith('-0')) {
-      if (currentNumber === '.') {
-        setNumber(number + currentNumber);
-      } else if (currentNumber === '0' && number.includes('.')) {
-        setNumber(number + currentNumber);
-      } else if (currentNumber !== '0' && !number.includes('.')) {
-        setNumber(currentNumber);
-      } else if (currentNumber === '0' && !number.includes('.')) {
-        setNumber(number);
-      } else {
-        setNumber(number + currentNumber);
-      }
-    } else {
-      setNumber(number + currentNumber);
-    }
-  };
-
-  const positiveNegative = () => {
-    if (number.includes('-')) {
-      setNumber(number.replace('-', ''));
-    } else {
-      setNumber('-' + number);
-    }
-  };
-
-  const deleteLastNumber = () => {
-    if (number.length === 1 && number === '0') {
-      return;
-    }
-
-    if (number.length === 2 && number.includes('-')) {
-      setNumber('0');
-      return;
-    }
-
-    setNumber(number.slice(0, number.length - 1));
-    return;
-  };
-
-  const handleSetLastNumber = () => {
-    if (number.endsWith('.')) {
-      setLastNumber(number.slice(0, -1));
-    } else {
-      setLastNumber(number);
-    }
-
-    setNumber('0');
-  };
-
-  const btnSumar = () => {
-    handleSetLastNumber();
-    lastOperation.current = Operadores.sumar;
-    return;
-  };
-
-  const btnRestar = () => {
-    handleSetLastNumber();
-    lastOperation.current = Operadores.restar;
-    return;
-  };
-
-  const btnMultiplicar = () => {
-    handleSetLastNumber();
-    lastOperation.current = Operadores.multiplicar;
-    return;
-  };
-
-  const btnDividir = () => {
-    handleSetLastNumber();
-    lastOperation.current = Operadores.dividir;
-    return;
-  };
+  const {
+    lastNumber,
+    number,
+    clear,
+    setNumberDisplay,
+    positiveNegative,
+    deleteLastNumber,
+    btnDividir,
+    btnMultiplicar,
+    btnRestar,
+    btnSumar,
+    calcular,
+  } = useCalculator();
 
   return (
     <View>
@@ -137,7 +57,7 @@ function CalculadoraScreen() {
       <View style={styles.keybContainer}>
         <ButtonCalc text="0" action={setNumberDisplay} ancho />
         <ButtonCalc text="." action={setNumberDisplay} />
-        <ButtonCalc action={handleSetLastNumber} text="=" color="#FF9427" />
+        <ButtonCalc action={calcular} text="=" color="#FF9427" />
       </View>
     </View>
   );
